@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>示範頁面選單 — POC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ===== 沿用 demo 的色票（variables.scss）===== */
+    :root {
+      --font-family-default: "微軟正黑體", "Noto Sans TC", "Roboto", "Ariel", sans-serif;
+      --bg-light: #E9EBF1;
+      --bg-dark: #4B5566;
+      --font-color-dark: #333333;
+      --font-color-mid-grey: #555;
+      --font-color-light: #FFFFFF;
+      --font-blue: #3992DE;
+      --btn-blue: #80BBEE;
+      --input-border: #B4B4B4;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: var(--font-family-default);
+      background: var(--bg-light);
+      color: var(--font-color-dark);
+      display: flex;
+      justify-content: center;
+      padding: 48px 20px;
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: 880px;
+    }
+
+    header {
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--bg-dark);
+    }
+
+    header p {
+      margin-top: 10px;
+      font-size: 16px;
+      color: var(--font-color-mid-grey);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      background: var(--font-color-light);
+      border: 1px solid var(--input-border);
+      border-radius: 12px;
+      padding: 24px;
+      text-decoration: none;
+      color: inherit;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(75, 85, 102, .18);
+      border-color: var(--btn-blue);
+    }
+
+    .card .tag {
+      align-self: flex-start;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--font-color-light);
+      background: var(--font-blue);
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 14px;
+    }
+
+    .card h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--bg-dark);
+    }
+
+    .card p {
+      margin-top: 8px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--font-color-mid-grey);
+      flex: 1;
+    }
+
+    .card .go {
+      margin-top: 18px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--font-blue);
+    }
+
+    footer {
+      margin-top: 48px;
+      font-size: 13px;
+      color: var(--font-color-mid-grey);
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <h1>示範頁面選單</h1>
+      <p>以下為本專案的 HTML 示範頁，點選卡片即可開啟。</p>
+    </header>
+
+    <!-- ===== 示範頁清單：未來新增 demo 時，複製一個 .card <a> 區塊即可 ===== -->
+    <div class="grid">
+      <a class="card" href="kiosk-housing-info-demo.html">
+        <span class="tag">Kiosk</span>
+        <h2>輸入住房資料</h2>
+        <p>機台（直式 1080×1920）住房資料輸入示範頁，含等比縮放置中。</p>
+        <span class="go">開啟示範 →</span>
+      </a>
+    </div>
+
+    <footer>POC · GitHub Pages</footer>
+  </div>
+</body>
+
+</html>
