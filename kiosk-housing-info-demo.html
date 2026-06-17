@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>輸入住房資料 — 示範頁面</title>
+  <!-- 跨平台字型備援（微軟正黑體不存在時退到 Noto Sans TC），離線時自動 fallback -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ===== 取自專案 variables.scss 的色票 ===== */
+    :root {
+      --font-family-default: "微軟正黑體", "Noto Sans TC", "Roboto", "Ariel", sans-serif;
+      --bg-light: #E9EBF1;
+      --bg-dark: #4B5566;
+      --font-color-dark: #333333;
+      --font-color-mid-grey: #555;
+      --font-color-light: #FFFFFF;
+      --font-blue: #3992DE;
+      --btn-blue: #80BBEE;
+      --btn-disable: #CCCCCC;
+      --input-border: #B4B4B4;
+      --mid-red: #E85B5B;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      /* 機台舞台外的留白區（letterbox） */
+      background: #1f242b;
+      font-family: var(--font-family-default);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ===== 機台舞台：固定直式 1080×1920，透過 JS 等比縮放置中，
+            確保在任何瀏覽器都呈現真機（直桌型）比例 ===== */
+    #kiosk-stage {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 1080px;
+      height: 1920px;
+      transform-origin: center center;
+      background: var(--bg-dark);
+      color: var(--font-color-light);
+      overflow: hidden;
+    }
+
+    /* ----- 返回 / 首頁 圖示（示範用，僅裝飾） ----- */
+    .back-svg {
+      position: absolute;
+      top: 48px;
+      left: 48px;
+      cursor: pointer;
+    }
+
+    .home-svg {
+      position: absolute;
+      top: 48px;
+      right: 48px;
+      cursor: pointer;
+    }
+
+    /* ----- 頁面標題 ----- */
+    .page-title {
+      width: 85.185%;
+      font-weight: 700;
+      color: var(--font-color-light);
+      margin-top: 215px;
+      margin-left: 80px;
+      font-size: 55px;
+    }
+
+    /* ----- 灰底大圓角內容區 ----- */
+    .page-content {
+      width: 100%;
+      height: 1568px;
+      border-top-left-radius: 150px 150px;
+      margin-top: 56px;
+      padding-top: 95px;
+      background-color: var(--bg-light);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 表單包覆（對應原 .keyboard-text 的 78.518vw 寬置中） */
+    .form-wrap {
+      width: 848px;
+      margin: 0 auto;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 40px;
+    }
+
+    /* ----- 區塊標題 ----- */
+    .input-title {
+      width: 100%;
+      color: var(--font-color-dark);
+      font-weight: 500;
+      font-size: 40px;
+      line-height: 48px;
+      margin-bottom: 16px;
+      text-align: start;
+    }
+
+    /* ----- 手機號碼輸入框（對應 .input-style） ----- */
+    .input-style {
+      width: 100%;
+      height: 136px;
+      border-radius: 24px;
+      background: var(--font-color-light);
+      border: 2px solid var(--input-border);
+      font-size: 48px;
+      padding-left: 40px;
+      font-family: var(--font-family-default);
+      color: var(--font-color-dark);
+    }
+
+    .input-style:focus {
+      outline: none;
+      border-color: var(--font-blue);
+    }
+
+    /* ===== 同行住客停車資訊 ===== */
+    .guest-section {
+      margin-top: 56px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      flex: 1;
+    }
+
+    .guest-section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .guest-section-head .title {
+      font-size: 40px;
+      font-weight: 700;
+      color: var(--font-color-dark);
+    }
+
+    .guest-section-head .subtitle {
+      font-size: 28px;
+      color: var(--font-color-mid-grey);
+    }
+
+    /* 住客卡片清單（可捲動） */
+    .guest-list {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+
+    .guest-list::-webkit-scrollbar {
+      width: 12px;
+    }
+
+    .guest-list::-webkit-scrollbar-thumb {
+      background: #b9bfca;
+      border-radius: 6px;
+    }
+
+    /* 單一住客卡片 */
+    .guest-card {
+      background: var(--font-color-light);
+      border: 2px solid #DADDE5;
+      border-radius: 24px;
+      padding: 28px 36px;
+      margin-bottom: 24px;
+    }
+
+    .guest-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .guest-name {
+      display: flex;
+      align-items: center;
+      font-size: 40px;
+      font-weight: 700;
+      color: var(--font-color-dark);
+    }
+
+    .guest-no {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      margin-right: 24px;
+      border-radius: 50%;
+      background: var(--bg-light);
+      color: var(--font-color-mid-grey);
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .parking-control {
+      display: flex;
+      align-items: center;
+    }
+
+    .parking-label {
+      font-size: 30px;
+      color: var(--font-color-mid-grey);
+      margin-right: 24px;
+      white-space: nowrap;
+    }
+
+    /* 是 / 否 切換鍵 */
+    .toggle-group {
+      display: inline-flex;
+      gap: 16px;
+    }
+
+    .toggle-btn {
+      width: 120px;
+      height: 76px;
+      border-radius: 16px;
+      border: 2px solid var(--input-border);
+      background: var(--font-color-light);
+      color: var(--font-color-mid-grey);
+      font-size: 34px;
+      font-weight: 700;
+      font-family: var(--font-family-default);
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+
+    .toggle-btn.active {
+      background: var(--font-blue);
+      border-color: var(--font-blue);
+      color: var(--font-color-light);
+    }
+
+    /* 車牌輸入列：選「是」才滑出 */
+    .plate-row {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height .25s ease, opacity .25s ease, margin-top .25s ease;
+    }
+
+    .guest-card.show-plate .plate-row {
+      max-height: 220px;
+      opacity: 1;
+      margin-top: 28px;
+    }
+
+    .plate-label {
+      display: block;
+      font-size: 30px;
+      color: var(--font-color-dark);
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+
+    .plate-input {
+      width: 100%;
+      height: 100px;
+      border-radius: 16px;
+      border: 2px solid var(--input-border);
+      background: var(--font-color-light);
+      font-size: 44px;
+      letter-spacing: 4px;
+      padding-left: 32px;
+      font-family: var(--font-family-default);
+      color: var(--font-color-dark);
+      text-transform: uppercase;
+    }
+
+    .plate-input:focus {
+      outline: none;
+      border-color: var(--font-blue);
+    }
+
+    /* ----- 底部確定鈕（對應 .agree-button 直式分支） ----- */
+    .footer {
+      flex-shrink: 0;
+      text-align: center;
+    }
+
+    .agree-button {
+      width: 580px;
+      height: 112px;
+      border-radius: 24px;
+      background-color: var(--font-color-dark);
+      color: var(--font-color-light);
+      font-size: 40px;
+      font-family: var(--font-family-default);
+      border: 0;
+      margin: 40px auto 0 auto;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="kiosk-stage">
+    <!-- 返回 -->
+    <svg class="back-svg" width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd"
+        d="M62 28H9.73234L29.7128 16.4643C30.6694 15.912 30.9971 14.6888 30.4449 13.7322C29.8926 12.7756 28.6694 12.4479 27.7128 13.0002L1.73205 28.0002C1.71882 28.0078 1.70572 28.0156 1.69273 28.0234C0.734036 28.1713 0 28.9999 0 30C0 31.0275 0.77483 31.874 1.77207 31.9871L27.7128 46.964C28.6694 47.5163 29.8926 47.1886 30.4449 46.232C30.9971 45.2754 30.6694 44.0522 29.7128 43.4999L9.79432 32H62C63.1046 32 64 31.1046 64 30C64 28.8954 63.1046 28 62 28Z"
+        fill="white" />
+    </svg>
+    <!-- 首頁 -->
+    <svg class="home-svg" width="60" height="52" viewBox="0 0 60 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M31.224 0.427979C30.8691 0.151297 30.432 0.0010376 29.982 0.0010376C29.532 0.0010376 29.0949 0.151297 28.74 0.427979L0 22.838L2.486 25.982L6 23.242V48C6.00211 49.0602 6.42422 50.0764 7.17391 50.8261C7.9236 51.5758 8.93978 51.9979 10 52H50C51.0602 51.9979 52.0764 51.5758 52.8261 50.8261C53.5758 50.0764 53.9979 49.0602 54 48V23.26L57.514 26L60 22.856L31.224 0.427979ZM34 48H26V32H34V48ZM38 48V32C37.9989 30.9394 37.5772 29.9226 36.8273 29.1727C36.0773 28.4228 35.0605 28.001 34 28H26C24.9395 28.001 23.9227 28.4228 23.1727 29.1727C22.4228 29.9226 22.0011 30.9394 22 32V48H10V20.124L30 4.54398L50 20.144V48H38Z"
+        fill="white" />
+    </svg>
+
+    <h2 class="page-title">輸入住房資料</h2>
+
+    <div class="page-content">
+      <div class="form-wrap">
+        <!-- 入住代表手機號碼 -->
+        <div>
+          <div class="input-title">請輸入您的手機號碼</div>
+          <input type="tel" class="input-style" inputmode="numeric" placeholder="0912345678" autocomplete="off" />
+        </div>
+
+        <!-- 同行住客停車資訊 -->
+        <div class="guest-section">
+          <div class="guest-section-head">
+            <span class="title">同行住客停車資訊<span style="font-size:24px;margin-left:4px">(10)</span></span>
+            <span class="subtitle">請為每位住客選擇是否需要停車</span>
+          </div>
+          <div class="guest-list" id="guest-list"></div>
+        </div>
+
+        <!-- 確定 -->
+        <div class="footer">
+          <button type="button" class="agree-button" id="confirm-btn">確定</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== 示範資料：10 位住客 =====
+    var guests = ['王小明', '陳美麗', '林志豪', '張雅婷', '李俊宏', '黃淑芬', '吳承翰', '劉欣怡', '蔡明達', '鄭家豪']
+
+    var listEl = document.getElementById('guest-list')
+
+    guests.forEach(function (name, i) {
+      var card = document.createElement('div')
+      card.className = 'guest-card'
+      card.innerHTML =
+        '<div class="guest-card-head">' +
+        '  <div class="guest-name"><span class="guest-no">' + (i + 1) + '</span>' + name + '</div>' +
+        '  <div class="parking-control">' +
+        '    <span class="parking-label">是否有停車</span>' +
+        '    <div class="toggle-group" role="radiogroup">' +
+        '      <button type="button" class="toggle-btn" data-val="yes">是</button>' +
+        '      <button type="button" class="toggle-btn active" data-val="no">否</button>' +
+        '    </div>' +
+        '  </div>' +
+        '</div>' +
+        '<div class="plate-row">' +
+        '  <label class="plate-label">車牌號碼</label>' +
+        '  <input type="text" class="plate-input" placeholder="例：ABC-1234" autocomplete="off" />' +
+        '</div>'
+      listEl.appendChild(card)
+    })
+
+    // 是 / 否 切換：選「是」才顯示車牌輸入框，選「否」清空並收起
+    listEl.addEventListener('click', function (e) {
+      var btn = e.target.closest('.toggle-btn')
+      if (!btn) return
+      var card = btn.closest('.guest-card')
+      card.querySelectorAll('.toggle-btn').forEach(function (b) { b.classList.remove('active') })
+      btn.classList.add('active')
+
+      var hasParking = btn.dataset.val === 'yes'
+      card.classList.toggle('show-plate', hasParking)
+      if (!hasParking) {
+        var input = card.querySelector('.plate-input')
+        if (input) input.value = ''
+      }
+    })
+
+    // 車牌自動轉大寫
+    listEl.addEventListener('input', function (e) {
+      if (e.target.classList.contains('plate-input')) {
+        e.target.value = e.target.value.toUpperCase()
+      }
+    })
+
+    // 確定：示範用，彙整輸入結果
+    document.getElementById('confirm-btn').addEventListener('click', function () {
+      var phone = document.querySelector('.input-style').value || '（未輸入）'
+      var lines = ['手機號碼：' + phone, '']
+      document.querySelectorAll('.guest-card').forEach(function (card, i) {
+        var has = card.classList.contains('show-plate')
+        var plate = card.querySelector('.plate-input').value
+        lines.push((i + 1) + '. ' + guests[i] + '　停車：' + (has ? '是　車牌：' + (plate || '（未輸入）') : '否'))
+      })
+      alert(lines.join('\n'))
+    })
+
+    // ===== 機台舞台等比縮放置中 =====
+    function fitStage () {
+      var stage = document.getElementById('kiosk-stage')
+      var scale = Math.min(window.innerWidth / 1080, window.innerHeight / 1920)
+      stage.style.transform = 'translate(-50%, -50%) scale(' + scale + ')'
+    }
+    window.addEventListener('resize', fitStage)
+    window.addEventListener('load', fitStage)
+    fitStage()
+  </script>
+</body>
+
+</html>
