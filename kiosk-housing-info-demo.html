@@ -119,12 +119,12 @@
       text-align: start;
     }
 
-    /* ----- 手機號碼輸入框（對應 .input-style） ----- */
+    /* ----- 手機號碼輸入框 ----- */
     .input-style {
       width: 100%;
       height: 136px;
       border-radius: 24px;
-      background: var(--font-color-light);
+      background: transparent;
       border: 2px solid var(--input-border);
       font-size: 48px;
       padding-left: 40px;
@@ -137,117 +137,34 @@
       border-color: var(--font-blue);
     }
 
-    /* ===== 同行住客停車資訊 ===== */
-    .guest-section {
-      margin-top: 56px;
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-      flex: 1;
+    /* ===== 停車詢問區 ===== */
+    .parking-section {
+      margin-top: 64px;
     }
 
-    .guest-section-head {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      margin-bottom: 24px;
-    }
-
-    .guest-section-head .title {
+    .parking-question {
       font-size: 40px;
-      font-weight: 700;
+      font-weight: 500;
       color: var(--font-color-dark);
+      margin-bottom: 32px;
     }
 
-    .guest-section-head .subtitle {
-      font-size: 28px;
-      color: var(--font-color-mid-grey);
-    }
-
-    /* 住客卡片清單（可捲動） */
-    .guest-list {
-      flex: 1;
-      min-height: 0;
-      overflow-y: auto;
-      padding-right: 8px;
-    }
-
-    .guest-list::-webkit-scrollbar {
-      width: 12px;
-    }
-
-    .guest-list::-webkit-scrollbar-thumb {
-      background: #b9bfca;
-      border-radius: 6px;
-    }
-
-    /* 單一住客卡片 */
-    .guest-card {
-      background: var(--font-color-light);
-      border: 2px solid #DADDE5;
-      border-radius: 24px;
-      padding: 28px 36px;
-      margin-bottom: 24px;
-    }
-
-    .guest-card-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .guest-name {
-      display: flex;
-      align-items: center;
-      font-size: 40px;
-      font-weight: 700;
-      color: var(--font-color-dark);
-    }
-
-    .guest-no {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 56px;
-      height: 56px;
-      margin-right: 24px;
-      border-radius: 50%;
-      background: var(--bg-light);
-      color: var(--font-color-mid-grey);
-      font-size: 28px;
-      font-weight: 700;
-    }
-
-    .parking-control {
-      display: flex;
-      align-items: center;
-    }
-
-    .parking-label {
-      font-size: 30px;
-      color: var(--font-color-mid-grey);
-      margin-right: 24px;
-      white-space: nowrap;
-    }
-
-    /* 是 / 否 切換鍵 */
     .toggle-group {
       display: inline-flex;
-      gap: 16px;
+      gap: 24px;
     }
 
     .toggle-btn {
-      width: 120px;
-      height: 76px;
+      width: 160px;
+      height: 96px;
       border-radius: 16px;
       border: 2px solid var(--input-border);
-      background: var(--font-color-light);
+      background: transparent;
       color: var(--font-color-mid-grey);
-      font-size: 34px;
+      font-size: 40px;
       font-weight: 700;
       font-family: var(--font-family-default);
       cursor: pointer;
-      transition: all .15s ease;
     }
 
     .toggle-btn.active {
@@ -256,37 +173,33 @@
       color: var(--font-color-light);
     }
 
-    /* 車牌輸入列：選「是」才滑出 */
+    /* 車牌輸入：選「是」才顯示，無動畫 */
     .plate-row {
-      max-height: 0;
-      opacity: 0;
-      overflow: hidden;
-      transition: max-height .25s ease, opacity .25s ease, margin-top .25s ease;
+      display: none;
+      margin-top: 48px;
     }
 
-    .guest-card.show-plate .plate-row {
-      max-height: 220px;
-      opacity: 1;
-      margin-top: 28px;
+    .plate-row.visible {
+      display: block;
     }
 
     .plate-label {
       display: block;
-      font-size: 30px;
+      font-size: 34px;
       color: var(--font-color-dark);
       font-weight: 500;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
     }
 
     .plate-input {
       width: 100%;
-      height: 100px;
+      height: 120px;
       border-radius: 16px;
       border: 2px solid var(--input-border);
-      background: var(--font-color-light);
-      font-size: 44px;
+      background: transparent;
+      font-size: 48px;
       letter-spacing: 4px;
-      padding-left: 32px;
+      padding-left: 40px;
       font-family: var(--font-family-default);
       color: var(--font-color-dark);
       text-transform: uppercase;
@@ -297,9 +210,11 @@
       border-color: var(--font-blue);
     }
 
-    /* ----- 底部確定鈕（對應 .agree-button 直式分支） ----- */
+    /* ----- 底部確定鈕 ----- */
     .footer {
       flex-shrink: 0;
+      margin-top: auto;
+      padding-top: 60px;
       text-align: center;
     }
 
@@ -312,7 +227,6 @@
       font-size: 40px;
       font-family: var(--font-family-default);
       border: 0;
-      margin: 40px auto 0 auto;
       cursor: pointer;
     }
   </style>
@@ -343,13 +257,17 @@
           <input type="tel" class="input-style" inputmode="numeric" placeholder="0912345678" autocomplete="off" />
         </div>
 
-        <!-- 同行住客停車資訊 -->
-        <div class="guest-section">
-          <div class="guest-section-head">
-            <span class="title">同行住客停車資訊<span style="font-size:24px;margin-left:4px">(10)</span></span>
-            <span class="subtitle">請為每位住客選擇是否需要停車</span>
+        <!-- 停車詢問 -->
+        <div class="parking-section">
+          <div class="parking-question">是否需要停車？</div>
+          <div class="toggle-group" role="radiogroup">
+            <button type="button" class="toggle-btn" id="btn-yes" data-val="yes">是</button>
+            <button type="button" class="toggle-btn active" id="btn-no" data-val="no">否</button>
           </div>
-          <div class="guest-list" id="guest-list"></div>
+          <div class="plate-row" id="plate-row">
+            <label class="plate-label">車牌號碼</label>
+            <input type="text" class="plate-input" id="plate-input" placeholder="例：ABC-1234" autocomplete="off" />
+          </div>
         </div>
 
         <!-- 確定 -->
@@ -361,65 +279,34 @@
   </div>
 
   <script>
-    // ===== 示範資料：10 位住客 =====
-    var guests = ['王小明', '陳美麗', '林志豪', '張雅婷', '李俊宏', '黃淑芬', '吳承翰', '劉欣怡', '蔡明達', '鄭家豪']
+    var btnYes = document.getElementById('btn-yes')
+    var btnNo = document.getElementById('btn-no')
+    var plateRow = document.getElementById('plate-row')
+    var plateInput = document.getElementById('plate-input')
 
-    var listEl = document.getElementById('guest-list')
-
-    guests.forEach(function (name, i) {
-      var card = document.createElement('div')
-      card.className = 'guest-card'
-      card.innerHTML =
-        '<div class="guest-card-head">' +
-        '  <div class="guest-name"><span class="guest-no">' + (i + 1) + '</span>' + name + '</div>' +
-        '  <div class="parking-control">' +
-        '    <span class="parking-label">是否有停車</span>' +
-        '    <div class="toggle-group" role="radiogroup">' +
-        '      <button type="button" class="toggle-btn" data-val="yes">是</button>' +
-        '      <button type="button" class="toggle-btn active" data-val="no">否</button>' +
-        '    </div>' +
-        '  </div>' +
-        '</div>' +
-        '<div class="plate-row">' +
-        '  <label class="plate-label">車牌號碼</label>' +
-        '  <input type="text" class="plate-input" placeholder="例：ABC-1234" autocomplete="off" />' +
-        '</div>'
-      listEl.appendChild(card)
+    btnYes.addEventListener('click', function () {
+      btnYes.classList.add('active')
+      btnNo.classList.remove('active')
+      plateRow.classList.add('visible')
     })
 
-    // 是 / 否 切換：選「是」才顯示車牌輸入框，選「否」清空並收起
-    listEl.addEventListener('click', function (e) {
-      var btn = e.target.closest('.toggle-btn')
-      if (!btn) return
-      var card = btn.closest('.guest-card')
-      card.querySelectorAll('.toggle-btn').forEach(function (b) { b.classList.remove('active') })
-      btn.classList.add('active')
-
-      var hasParking = btn.dataset.val === 'yes'
-      card.classList.toggle('show-plate', hasParking)
-      if (!hasParking) {
-        var input = card.querySelector('.plate-input')
-        if (input) input.value = ''
-      }
+    btnNo.addEventListener('click', function () {
+      btnNo.classList.add('active')
+      btnYes.classList.remove('active')
+      plateRow.classList.remove('visible')
+      plateInput.value = ''
     })
 
-    // 車牌自動轉大寫
-    listEl.addEventListener('input', function (e) {
-      if (e.target.classList.contains('plate-input')) {
-        e.target.value = e.target.value.toUpperCase()
-      }
+    plateInput.addEventListener('input', function () {
+      plateInput.value = plateInput.value.toUpperCase()
     })
 
-    // 確定：示範用，彙整輸入結果
     document.getElementById('confirm-btn').addEventListener('click', function () {
       var phone = document.querySelector('.input-style').value || '（未輸入）'
-      var lines = ['手機號碼：' + phone, '']
-      document.querySelectorAll('.guest-card').forEach(function (card, i) {
-        var has = card.classList.contains('show-plate')
-        var plate = card.querySelector('.plate-input').value
-        lines.push((i + 1) + '. ' + guests[i] + '　停車：' + (has ? '是　車牌：' + (plate || '（未輸入）') : '否'))
-      })
-      alert(lines.join('\n'))
+      var hasParking = btnYes.classList.contains('active')
+      var plate = plateInput.value
+      var msg = '手機號碼：' + phone + '\n停車：' + (hasParking ? '是　車牌：' + (plate || '（未輸入）') : '否')
+      alert(msg)
     })
 
     // ===== 機台舞台等比縮放置中 =====
